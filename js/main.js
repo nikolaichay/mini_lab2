@@ -1,13 +1,14 @@
-import {setFormValue, submitSignUpForm, validateEmail, validatePassword} from "./utils.js"
+import {setFormValue, submitSignUpForm, validateEmail, validatePassword, getValidation, submitSignInForm} from "./utils.js"
 
 
 ////// ДЕМОНСТРАЦИОННЫЙ УЧАСТОК КОДА. На оценку не влияет, исключительно для саморазвития.
 
 // Предлагаю "поиграться" с частями кода ниже, чтобы познакомиться с JS
 // Получаем элемент и меняем его класс, который определеён в библиотеке стилей materialize
-const password = document.getElementById('password');
-password.classList.add("valid")
-password.classList.remove("valid")
+
+//const password = document.getElementById('password');
+//password.classList.add("valid")
+//password.classList.remove("valid")
 
 // В браузере можно посмотреть, что из себя представляет документ
 // (CTRL+SHIFT+i для открытия консоли и открыть вкладку "консоль", туда будет залогированно значение)
@@ -38,9 +39,11 @@ const email_id = 'email'
 
 const sign_in_link_id = 'sign_in_link'
 const sign_up_form_id = 'sign_up_form'
+const sign_up_link_id = 'sign_up_link'
 // const sign_in_form_id = 'sign_in_form'  // Пригодится
 const sign_up_btn_id = 'sign_up_btn'
 const sign_in_form_id = 'sign_in_form'
+const sign_in_btn_id = 'sign_in_btn'
 
 
 // Получаем элемент DOM-дерева по id и присваиваем значение аттрибуту oninput
@@ -54,14 +57,30 @@ first_name.oninput = (e) => setFormValue(first_name_id, e.target.value)  // Ус
 const email = document.getElementById(email_id);
 email.oninput = (e) => setFormValue(email_id, e.target.value, validateEmail) // Установить значение с валидацией
 
-
+const password = document.getElementById(password_id);
+password.oninput = (e) =>{
+setFormValue(password_id, e.target.value, validatePassword)
+if (!getValidation(password_id)){
+    password.classList.add("invalid")
+}
+else {
+    password.classList.remove("invalid")
+}
+}
 
 // Меняем стили объекта DOM дерева. Это позволяет скрыть форму регистрации и показать форму авторизации
 // Объект формы не исключается из DOM дерева, а просто становистя невидимым
 const switch_to_sign_in = document.getElementById(sign_in_link_id);
+document.getElementById(sign_in_form_id).style.display = "none"
 switch_to_sign_in.onclick = (e) => {
   document.getElementById(sign_up_form_id).style.display = "none"
   document.getElementById(sign_in_form_id).style.display = ""
+}
+
+const switch_to_sign_up = document.getElementById(sign_up_link_id);
+switch_to_sign_up.onclick = (e) => {
+  document.getElementById(sign_up_form_id).style.display = ""
+  document.getElementById(sign_in_form_id).style.display = "none"
 }
 
 
@@ -73,3 +92,10 @@ sign_up_btn.onclick = (e) => {
   submitSignUpForm()
 }
 
+const sign_in_btn = document.getElementById(sign_in_btn_id);
+sign_in_btn.onclick = (e) => {
+  // При нажатии кнопки в форме по умолчанию происходит перезагрузка страницы.
+  // Чтобы отключить его, нужно отменить стандартное поведение события
+  e.preventDefault()
+  submitSignInForm()
+}
